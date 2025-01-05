@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PoolDTO {
     private Integer maxCapacity;
-    private Integer currentCapacity;
     private String location;
 }
