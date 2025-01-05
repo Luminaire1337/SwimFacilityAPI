@@ -1,8 +1,10 @@
 package io.github.luminaire1337.swimfacilityapi.auth;
 
+import io.github.luminaire1337.swimfacilityapi.models.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,39 +21,37 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Login with username and password")
     @ApiResponse(description = "Returns JWT token if login was successful", responseCode = "200")
-    @ApiResponse(description = "Login failed", responseCode = "401")
+    @ApiResponse(description = "Login failed", responseCode = "403")
     public ResponseEntity<String> login(@RequestBody AuthDTO authDTO) {
         try {
-            final String token = this.authService.authenticate(authDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(token);
+            return ResponseEntity.status(HttpStatus.OK).body(this.authService.authenticate(authDTO));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
     }
 
     @PostMapping("/register")
     @Operation(summary = "Register with username and password")
-    @ApiResponse(description = "Returns JWT token if registration was successful", responseCode = "201")
-    @ApiResponse(description = "Registration failed", responseCode = "400")
-    public ResponseEntity<String> register(@RequestBody AuthDTO authDTO) {
+    @ApiResponse(description = "Returns User object if successful", responseCode = "201")
+    @ApiResponse(description = "Registration failed", responseCode = "403")
+    public ResponseEntity<User> register(@RequestBody AuthDTO authDTO) {
         try {
-            final String token = this.authService.register(authDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(token);
+            return ResponseEntity.status(HttpStatus.CREATED).body(this.authService.register(authDTO));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed");
+            LogManager.getLogger().error("Registration failed {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
     }
 
     @PostMapping("/validate")
     @Operation(summary = "Validate JWT token")
-    @ApiResponse(description = "Returns username if token is valid", responseCode = "200")
-    @ApiResponse(description = "Token is invalid", responseCode = "401")
-    public ResponseEntity<String> validate(@RequestBody ValidateTokenDTO validateTokenDTO) {
+    @ApiResponse(description = "Returns User object if successful", responseCode = "200")
+    @ApiResponse(description = "Token is invalid", responseCode = "403")
+    public ResponseEntity<User> validate(@RequestBody ValidateTokenDTO validateTokenDTO) {
         try {
-            final String username = this.authService.validateToken(validateTokenDTO.getToken());
-            return ResponseEntity.status(HttpStatus.OK).body(username);
+            return ResponseEntity.status(HttpStatus.OK).body(this.authService.validateToken(validateTokenDTO.getToken()));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
     }
 }

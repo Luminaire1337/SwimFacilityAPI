@@ -10,7 +10,7 @@
     </parent>
     <groupId>io.github.Luminaire1337</groupId>
     <artifactId>SwimFacilityAPI</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>SwimFacilityAPI</name>
     <description>Swim facility API management system</description>
     <url>https://github.com/Luminaire1337/SwimFacilityAPI</url>

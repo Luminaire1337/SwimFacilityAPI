@@ -18,11 +18,12 @@ public class AuthService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
 
-    public String validateToken(String token) {
+    public User validateToken(String token) {
         final String username = this.jwtService.validateToken(token);
         User user = this.userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getUsername();
+        user.setPassword(null);
+        return user;
     }
 
     public String authenticate(AuthDTO authDTO) throws RuntimeException {
@@ -33,7 +34,7 @@ public class AuthService {
         return this.jwtService.generateToken(authDTO.getUsername());
     }
 
-    public String register(AuthDTO authDTO) throws RuntimeException {
+    public User register(AuthDTO authDTO) throws RuntimeException {
         if (this.userRepository.findByUsername(authDTO.getUsername()).isPresent()) {
             throw new RuntimeException("Username already exists");
         }
@@ -46,6 +47,7 @@ public class AuthService {
                 .build();
 
         this.userRepository.save(newUser);
-        return this.jwtService.generateToken(newUser.getUsername());
+        newUser.setPassword(null);
+        return newUser;
     }
 }

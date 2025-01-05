@@ -1,6 +1,5 @@
 package io.github.luminaire1337.swimfacilityapi.jwt;
 
-import io.github.luminaire1337.swimfacilityapi.models.user.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +10,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -30,11 +31,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null && token.startsWith("Bearer ")) {
             try {
                 String username = this.jwtService.validateToken(token.substring(7));
-                User user = (User) this.userDetailsService.loadUserByUsername(username);
-                SecurityContextHolder.getContext().setAuthentication(
-                        new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities())
-                );
-                this.logger.debug("User {} authenticated", username);
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                this.logger.debug("User {} authenticated", userDetails.getUsername());
             } catch (RuntimeException e) {
                 SecurityContextHolder.clearContext();
                 this.logger.debug("Token validation failed: {}", e.getMessage());
