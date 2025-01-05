@@ -25,6 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll() // Allow /auth/** endpoints
                         .requestMatchers("/").permitAll() // Allow root endpoint
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs*/**").permitAll() // Allow Swagger UI and OpenAPI endpoints
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // Require ADMIN role for /admin/** endpoints
                         .anyRequest().authenticated() // Require authentication for other endpoints
                 )
                 .sessionManagement(session -> session

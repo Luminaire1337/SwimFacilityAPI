@@ -43,7 +43,7 @@ public class AuthService {
         User newUser = User.builder()
                 .username(authDTO.getUsername())
                 .password(this.passwordEncoder.encode(authDTO.getPassword()))
-                .role(Role.USER)
+                .role(Role.ROLE_USER)
                 .build();
 
         this.userRepository.save(newUser);
