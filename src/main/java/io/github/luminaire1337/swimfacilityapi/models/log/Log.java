@@ -21,7 +21,7 @@ public class Log {
     private String id;
     private LocalDateTime timestamp;
     private LogType type;
-    
+
     @DBRef
     private Pool pool;
 }
