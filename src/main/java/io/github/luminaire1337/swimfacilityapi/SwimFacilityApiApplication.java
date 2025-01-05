@@ -48,7 +48,7 @@ public class SwimFacilityApiApplication {
                 User newUser = User.builder()
                         .username(username)
                         .password(passwordEncoder.encode(password))
-                        .role(role.equals("admin") ? Role.ADMIN : Role.USER)
+                        .role(role.equals("admin") ? Role.ROLE_ADMIN : Role.ROLE_USER)
                         .build();
 
                 userRepository.save(newUser);

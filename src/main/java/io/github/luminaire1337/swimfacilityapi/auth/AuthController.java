@@ -4,7 +4,6 @@ import io.github.luminaire1337.swimfacilityapi.models.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
-import org.apache.logging.log4j.LogManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +37,6 @@ public class AuthController {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(this.authService.register(authDTO));
         } catch (Exception e) {
-            LogManager.getLogger().error("Registration failed {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
     }

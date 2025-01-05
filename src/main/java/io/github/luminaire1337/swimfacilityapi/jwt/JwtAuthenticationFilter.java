@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                this.logger.debug("User {} authenticated", userDetails.getUsername());
+                this.logger.debug("User {} authenticated, authorities: {}", userDetails.getUsername(), userDetails.getAuthorities());
             } catch (RuntimeException e) {
                 SecurityContextHolder.clearContext();
                 this.logger.debug("Token validation failed: {}", e.getMessage());
